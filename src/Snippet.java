@@ -8,6 +8,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;  
 import javax.swing.JPanel;  
 
+import java.io.File;
+import java.io.IOException;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+
 import static java.awt.GraphicsDevice.WindowTranslucency.*;
 
 
@@ -16,6 +21,7 @@ public class Snippet extends JFrame implements MouseListener{
     Point a = new Point(0,0);
     Point b = new Point(0,0);
     Rectangle snipArea = new Rectangle(0,0);
+    
 
     public Snippet() {
         super("TranslucentWindow");
@@ -58,6 +64,61 @@ public class Snippet extends JFrame implements MouseListener{
         });
     }
 
+    void drawRectangles(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+ 
+        // g2d.draw(new Rectangle(10,10,100,100));
+        
+        setVisible(true);
+ 
+    }
+ 
+    public void paint(Graphics g) {
+        System.out.println("painting");
+        super.paint(g);
+        drawRectangles(g);
+    }
+ 
+
+    
+    public void mousePressed(MouseEvent e) {
+        a = MouseInfo.getPointerInfo().getLocation();
+        System.out.println(a.toString());
+    }  
+
+    public void mouseReleased(MouseEvent e) {
+        b = MouseInfo.getPointerInfo().getLocation();
+        System.out.println(b.toString());
+        snipArea = setRectangle(a,b);
+        getSnippet();
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        System.out.println("h");}  
+
+    public void mouseEntered(MouseEvent e) {}  
+
+    public void mouseExited(MouseEvent e) {}  
+
+    public boolean getSnippet(){
+        try{
+            Robot rbt = new Robot();
+            String format = "png";
+            String fileName = "./ScreenSnippet." + format;
+            setVisible(false);
+            
+            BufferedImage screenFullImage = rbt.createScreenCapture(snipArea);
+            ImageIO.write(screenFullImage, format, new File(fileName));
+            System.out.println("saved the image!\t" + fileName);
+        } catch (AWTException | IOException ex) {
+            System.err.println(ex);
+        }
+
+        
+
+        return true;
+    }
+
     public Rectangle setRectangle(Point a, Point b){
         int X, Y, width, height = 0;
         if(a.getX()<=b.getX()){
@@ -76,39 +137,5 @@ public class Snippet extends JFrame implements MouseListener{
         }
         return new Rectangle(X,Y,width,height);
     }
-
-    void drawRectangles(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
- 
-        g2d.draw(new Rectangle(10,10,100,100));
-        
-        setVisible(true);
- 
-    }
- 
-    public void paint(Graphics g) {
-        System.out.println("painting");
-        super.paint(g);
-        drawRectangles(g);
-    }
- 
-
-    
-    public void mousePressed(MouseEvent e) {
-        a = MouseInfo.getPointerInfo().getLocation();
-        System.out.println("h");
-    }  
-
-    public void mouseReleased(MouseEvent e) {
-        b = MouseInfo.getPointerInfo().getLocation();
-        snipArea = setRectangle(a,b);
-    }
-
-    public void mouseClicked(MouseEvent e) {
-        System.out.println("h");}  
-
-    public void mouseEntered(MouseEvent e) {}  
-
-    public void mouseExited(MouseEvent e) {}  
 
 }
