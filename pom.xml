@@ -1,0 +1,14 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.thethomas</groupId>
+  <artifactId>snip2clip</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+  	<!-- https://mvnrepository.com/artifact/com.asprise.ocr/java-ocr-api -->
+	<dependency>
+	    <groupId>com.asprise.ocr</groupId>
+	    <artifactId>java-ocr-api</artifactId>
+	    <version>15.3.0.3</version>
+	</dependency>
+  </dependencies>
+</project>

@@ -1,3 +1,5 @@
+package snip2clip;
+
 import java.awt.FlowLayout;  
 import java.awt.event.*; 
 import java.awt.*;
@@ -13,17 +15,22 @@ import java.io.IOException;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
+import com.asprise.ocr.*;
+
+// import net.sourceforge.tess4j.*;
+  
+
 import static java.awt.GraphicsDevice.WindowTranslucency.*;
 
 
-public class Snippet extends JFrame implements MouseListener{
+public class snip2clip extends JFrame implements MouseListener{
     Label l;
     Point a = new Point(0,0);
     Point b = new Point(0,0);
     Rectangle snipArea = new Rectangle(0,0);
     
 
-    public Snippet() {
+    public snip2clip() {
         super("TranslucentWindow");
         setLayout(new GridBagLayout());
         addMouseListener(this);
@@ -52,7 +59,7 @@ public class Snippet extends JFrame implements MouseListener{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                Snippet tw = new Snippet();
+            	snip2clip tw = new snip2clip();
 
                 // Set the window to 55% opaque (45% translucent).
                 tw.setOpacity(0.55f);
@@ -100,6 +107,16 @@ public class Snippet extends JFrame implements MouseListener{
 
     public void mouseExited(MouseEvent e) {}  
 
+    public void OCRImage(String fileName){
+        // AsposeOCR api = new AsposeOCR();
+    	Ocr.setUp();
+    	Ocr ocr = new Ocr();
+    	ocr.startEngine("eng", Ocr.SPEED_FASTEST); // English
+    	String s = ocr.recognize(new File[] {new File("ScreenSnippet.png")}, Ocr.RECOGNIZE_TYPE_ALL, Ocr.OUTPUT_FORMAT_PLAINTEXT);
+    	System.out.println(s);
+    	ocr.stopEngine();
+    }
+
     public boolean getSnippet(){
         try{
             Robot rbt = new Robot();
@@ -110,6 +127,7 @@ public class Snippet extends JFrame implements MouseListener{
             BufferedImage screenFullImage = rbt.createScreenCapture(snipArea);
             ImageIO.write(screenFullImage, format, new File(fileName));
             System.out.println("saved the image!\t" + fileName);
+            OCRImage(fileName);
         } catch (AWTException | IOException ex) {
             System.err.println(ex);
         }
