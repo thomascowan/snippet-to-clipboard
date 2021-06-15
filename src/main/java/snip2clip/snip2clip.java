@@ -1,6 +1,8 @@
 package snip2clip;
 
-import java.awt.FlowLayout;  
+import java.awt.FlowLayout;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*; 
 import java.awt.*;
 
@@ -113,11 +115,20 @@ public class snip2clip extends JFrame implements MouseListener{
     	Ocr ocr = new Ocr();
     	ocr.startEngine("eng", Ocr.SPEED_FASTEST); // English
     	String s = ocr.recognize(new File[] {new File("ScreenSnippet.png")}, Ocr.RECOGNIZE_TYPE_ALL, Ocr.OUTPUT_FORMAT_PLAINTEXT);
-    	System.out.println(s);
+//    	System.out.println(s);
     	ocr.stopEngine();
+    	copyToClipboard(s);
     }
 
-    public boolean getSnippet(){
+    private void copyToClipboard(String s) {
+		// TODO Auto-generated method stub
+    	StringSelection selection = new StringSelection(s);
+    	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    	clipboard.setContents(selection, selection);
+    	System.out.println("Copied to clipboard!");
+	}
+
+	public boolean getSnippet(){
         try{
             Robot rbt = new Robot();
             String format = "png";
