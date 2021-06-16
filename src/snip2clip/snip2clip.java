@@ -43,28 +43,21 @@ public class snip2clip extends JFrame implements MouseListener{
     }
 
     public static void main(String[] args) {
-        // Determine if the GraphicsDevice supports translucency.
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = ge.getDefaultScreenDevice();
 
-        //If translucent windows aren't supported, exit.
         if (!gd.isWindowTranslucencySupported(TRANSLUCENT)) {
             System.err.println("Translucency is not supported");
             System.exit(0);
         }
         
         JFrame.setDefaultLookAndFeelDecorated(true);
-
-        // Create the GUI on the event-dispatching thread
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
             	tw = new snip2clip();
-                // Set the window to 55% opaque (45% translucent).
                 tw.setOpacity(0.55f);
                 tw.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-//                 tw.setUndecorated(true);
-                // Display the window.
                 tw.setVisible(true);
             }
         });
@@ -99,7 +92,9 @@ public class snip2clip extends JFrame implements MouseListener{
     public void mouseEntered(MouseEvent e) {}  
 
     public void mouseExited(MouseEvent e) {
-        MouseInfo.getPointerInfo().getDevice().setFullScreenWindow(tw);;
+    	if(closing) return;
+        MouseInfo.getPointerInfo().getDevice();
+        tw.setLocation(a);
         tw.setOpacity(0.55f);
         tw.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         tw.setVisible(true);
