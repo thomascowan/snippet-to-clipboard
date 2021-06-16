@@ -47,9 +47,8 @@ public class snip2clip extends JFrame implements MouseListener{
 
         //If translucent windows aren't supported, exit.
         if (!gd.isWindowTranslucencySupported(TRANSLUCENT)) {
-            System.err.println(
-                "Translucency is not supported");
-            	System.exit(0);
+            System.err.println("Translucency is not supported");
+            System.exit(0);
         }
         
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -63,7 +62,7 @@ public class snip2clip extends JFrame implements MouseListener{
                 // Set the window to 55% opaque (45% translucent).
                 tw.setOpacity(0.55f);
                 tw.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-                // tw.setUndecorated(true);
+//                 tw.setUndecorated(true);
                 // Display the window.
                 tw.setVisible(true);
             }
@@ -72,9 +71,15 @@ public class snip2clip extends JFrame implements MouseListener{
  
     public void paint(Graphics g) {
         super.paint(g);
+        
+        if(!a.equals(new Point(0,0))) {
+        	Point drag = MouseInfo.getPointerInfo().getLocation();
+        	Rectangle currRect = setRectangle(a,drag);
+        	g.setColor(new Color(30,30,30));
+        	g.fillRect(currRect.x, currRect.y, currRect.width, currRect.height);
+        }
+        repaint();
     }
- 
-
     
     public void mousePressed(MouseEvent e) {
         a = MouseInfo.getPointerInfo().getLocation();
@@ -94,9 +99,8 @@ public class snip2clip extends JFrame implements MouseListener{
 
     public void OCRImage(String fileName){
     	File imageFile = new File("ScreenSnippet.png");
-        ITesseract instance = new Tesseract();  // JNA Interface Mapping
-        // ITesseract instance = new Tesseract1(); // JNA Direct Mapping
-        instance.setDatapath("tessdata"); // path to tessdata directory
+        ITesseract instance = new Tesseract();
+        instance.setDatapath("tessdata");
 
         try {
             String result = instance.doOCR(imageFile);
@@ -105,19 +109,6 @@ public class snip2clip extends JFrame implements MouseListener{
             System.err.println(e.getMessage());
             System.exit(0);
         }
-    	
-
-    	
-    	
-    	
-    	
-//    	Ocr.setUp();
-//    	Ocr ocr = new Ocr();
-//    	ocr.startEngine("eng", Ocr.SPEED_FASTEST); // English
-//    	String s = ocr.recognize(new File[] {new File("ScreenSnippet.png")}, Ocr.RECOGNIZE_TYPE_ALL, Ocr.OUTPUT_FORMAT_PLAINTEXT);
-//    	System.out.println(s);
-//    	ocr.stopEngine();
-        
     }
 
     private void copyToClipboard(String s) {
@@ -130,12 +121,10 @@ public class snip2clip extends JFrame implements MouseListener{
 	public void getSnippet(){
         try{
             Robot rbt = new Robot();
-            String format = "png";
-            String fileName = "./ScreenSnippet." + format;
             setVisible(false);
             BufferedImage screenFullImage = rbt.createScreenCapture(snipArea);
-            ImageIO.write(screenFullImage, format, new File(fileName));
-            OCRImage(fileName);
+            ImageIO.write(screenFullImage, "png", new File("./ScreenSnippet.png"));
+            OCRImage("./ScreenSnippet.png");
         } catch (AWTException | IOException ex) {
             System.err.println(ex);
             System.exit(0);
