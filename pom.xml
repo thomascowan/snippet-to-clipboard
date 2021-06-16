@@ -10,5 +10,18 @@
 	    <artifactId>java-ocr-api</artifactId>
 	    <version>15.3.0.3</version>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.bytedeco.javacpp-presets/tesseract -->
+<dependency>
+    <groupId>net.sourceforge.tess4j</groupId>
+    <artifactId>tess4j</artifactId>
+    <version>4.5.4</version>
+</dependency>
+	<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>1.7.30</version>
+</dependency>
+	
   </dependencies>
 </project>
