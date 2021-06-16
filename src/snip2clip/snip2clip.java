@@ -27,6 +27,8 @@ public class snip2clip extends JFrame implements MouseListener{
     Point a = new Point(0,0);
     Point b = new Point(0,0);
     Rectangle snipArea = new Rectangle(0,0);
+    static snip2clip tw = null;
+    boolean closing = false;
     
 
     public snip2clip() {
@@ -57,8 +59,7 @@ public class snip2clip extends JFrame implements MouseListener{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-            	snip2clip tw = new snip2clip();
-
+            	tw = new snip2clip();
                 // Set the window to 55% opaque (45% translucent).
                 tw.setOpacity(0.55f);
                 tw.setExtendedState(JFrame.MAXIMIZED_BOTH); 
@@ -71,6 +72,8 @@ public class snip2clip extends JFrame implements MouseListener{
  
     public void paint(Graphics g) {
         super.paint(g);
+        g.setColor(new Color(70,70,70));
+    	g.fillRect(0, 0, 4000, 4000);
         
         if(!a.equals(new Point(0,0))) {
         	Point drag = MouseInfo.getPointerInfo().getLocation();
@@ -95,7 +98,12 @@ public class snip2clip extends JFrame implements MouseListener{
 
     public void mouseEntered(MouseEvent e) {}  
 
-    public void mouseExited(MouseEvent e) {}  
+    public void mouseExited(MouseEvent e) {
+        MouseInfo.getPointerInfo().getDevice().setFullScreenWindow(tw);;
+        tw.setOpacity(0.55f);
+        tw.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        tw.setVisible(true);
+    }
 
     public void OCRImage(String fileName){
     	File imageFile = new File("ScreenSnippet.png");
@@ -124,6 +132,8 @@ public class snip2clip extends JFrame implements MouseListener{
             setVisible(false);
             BufferedImage screenFullImage = rbt.createScreenCapture(snipArea);
             ImageIO.write(screenFullImage, "png", new File("./ScreenSnippet.png"));
+
+        	closing = true;
             OCRImage("./ScreenSnippet.png");
         } catch (AWTException | IOException ex) {
             System.err.println(ex);
