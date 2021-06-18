@@ -84,7 +84,7 @@ public class snip2clip extends JFrame implements MouseListener{
     public void mouseReleased(MouseEvent e) {
         b = MouseInfo.getPointerInfo().getLocation();
         System.out.println(b);
-        snipArea = setRectangle(a,b);
+        snipArea = selectText(a,b);
         System.out.println(snipArea.toString());
         OCR();
     }
@@ -163,6 +163,25 @@ public class snip2clip extends JFrame implements MouseListener{
         }
         while(X > MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth()) X -=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth();
         while(Y > MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight()) Y -=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
+        return new Rectangle(X,Y,width,height);
+    }
+
+    public Rectangle selectText(Point a, Point b){
+        int X, Y, width, height = 0;
+        if(a.getX()<=b.getX()){
+            X = (int) a.getX();
+            width = (int) (b.getX() - a.getX());
+        } else {
+            X = (int) b.getX();
+            width = (int) (a.getX() - b.getX());
+        }
+        if(a.getY()<=b.getY()){
+            Y = (int) a.getY();
+            height = (int) (b.getY() - a.getY());
+        } else {
+            Y = (int) b.getY();
+            height = (int) (a.getY() - b.getY());
+        }
         return new Rectangle(X,Y,width,height);
     }
 
