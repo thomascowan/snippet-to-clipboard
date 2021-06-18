@@ -23,7 +23,6 @@ import static java.awt.GraphicsDevice.WindowTranslucency.*;
 public class snip2clip extends JFrame implements MouseListener{
 
 	private static final long serialVersionUID = 1L;
-	Label l;
     Point a = new Point(0,0);
     Point b = new Point(0,0);
     Rectangle snipArea = new Rectangle(0,0);
@@ -84,7 +83,7 @@ public class snip2clip extends JFrame implements MouseListener{
     public void mouseReleased(MouseEvent e) {
         b = MouseInfo.getPointerInfo().getLocation();
         snipArea = setRectangle(a,b);
-        getSnippet();
+        OCR();
     }
 
     public void mouseClicked(MouseEvent e) {}  
@@ -93,35 +92,12 @@ public class snip2clip extends JFrame implements MouseListener{
 
     public void mouseExited(MouseEvent e) {
     	if(closing) return;
-        MouseInfo.getPointerInfo().getDevice();
-        tw.setLocation(a);
-        tw.setOpacity(0.55f);
-        tw.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        tw.setVisible(true);
+    	String q = MouseInfo.getPointerInfo().getDevice().toString();
+        int w = Integer.parseInt(q.substring(q.length()-2, q.length()-1));
+        showOnScreen(w, tw);
     }
 
-    public void OCRImage(String fileName){
-    	File imageFile = new File("ScreenSnippet.png");
-        ITesseract instance = new Tesseract();
-        instance.setDatapath("tessdata");
-
-        try {
-            String result = instance.doOCR(imageFile);
-        	copyToClipboard(result);
-        } catch (TesseractException e) {
-            System.err.println(e.getMessage());
-            System.exit(0);
-        }
-    }
-
-    private void copyToClipboard(String s) {
-    	StringSelection selection = new StringSelection(s);
-    	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-    	clipboard.setContents(selection, selection);
-    	System.out.println("Copied to clipboard!");
-	}
-
-	public void getSnippet(){
+	public void OCR(){
         try{
             Robot rbt = new Robot();
             setVisible(false);
@@ -129,12 +105,36 @@ public class snip2clip extends JFrame implements MouseListener{
             ImageIO.write(screenFullImage, "png", new File("./ScreenSnippet.png"));
 
         	closing = true;
-            OCRImage("./ScreenSnippet.png");
+        	File imageFile = new File("ScreenSnippet.png");
+            ITesseract instance = new Tesseract();
+            instance.setDatapath("tessdata");
+
+            try {
+            	StringSelection selection = new StringSelection(instance.doOCR(imageFile));
+            	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            	clipboard.setContents(selection, selection);
+            	System.out.println("Copied to clipboard!");
+            } catch (TesseractException e) {
+                System.err.println(e.getMessage());
+                System.exit(0);
+            }
         } catch (AWTException | IOException ex) {
             System.err.println(ex);
             System.exit(0);
         }
     }
+	
+	public static void showOnScreen( int screen, JFrame frame ) {
+	    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	    GraphicsDevice[] gd = ge.getScreenDevices();
+	    if( screen > -1 && screen < gd.length ) {
+	        frame.setLocation(gd[screen].getDefaultConfiguration().getBounds().x, frame.getY());
+	    } else if( gd.length > 0 ) {
+	        frame.setLocation(gd[0].getDefaultConfiguration().getBounds().x, frame.getY());
+	    } else {
+	        throw new RuntimeException( "No Screens Found" );
+	    }
+	}
 
     public Rectangle setRectangle(Point a, Point b){
         int X, Y, width, height = 0;
