@@ -78,11 +78,14 @@ public class snip2clip extends JFrame implements MouseListener{
     
     public void mousePressed(MouseEvent e) {
         a = MouseInfo.getPointerInfo().getLocation();
+        System.out.println(a);
     }  
 
     public void mouseReleased(MouseEvent e) {
         b = MouseInfo.getPointerInfo().getLocation();
+        System.out.println(b);
         snipArea = setRectangle(a,b);
+        System.out.println(snipArea.toString());
         OCR();
     }
 
@@ -92,9 +95,15 @@ public class snip2clip extends JFrame implements MouseListener{
 
     public void mouseExited(MouseEvent e) {
     	if(closing) return;
-    	String q = MouseInfo.getPointerInfo().getDevice().toString();
-        int w = Integer.parseInt(q.substring(q.length()-2, q.length()-1));
-        showOnScreen(w, tw);
+        showOnScreen(getScreenID(), tw);
+    }
+    
+    public int getScreenID() {
+        return Integer.parseInt(
+        		MouseInfo.getPointerInfo().getDevice().toString().substring(
+        		MouseInfo.getPointerInfo().getDevice().toString().length()-2, 
+        		MouseInfo.getPointerInfo().getDevice().toString().length()-1)
+        );
     }
 
 	public void OCR(){
@@ -152,6 +161,8 @@ public class snip2clip extends JFrame implements MouseListener{
             Y = (int) b.getY();
             height = (int) (a.getY() - b.getY());
         }
+        while(X > MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth()) X -=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth();
+        while(Y > MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight()) Y -=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
         return new Rectangle(X,Y,width,height);
     }
 
