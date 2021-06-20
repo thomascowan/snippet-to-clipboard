@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
@@ -78,14 +80,11 @@ public class snip2clip extends JFrame implements MouseListener{
     
     public void mousePressed(MouseEvent e) {
         a = MouseInfo.getPointerInfo().getLocation();
-        System.out.println(a);
     }  
 
     public void mouseReleased(MouseEvent e) {
         b = MouseInfo.getPointerInfo().getLocation();
-        System.out.println(b);
         snipArea = selectText(a,b);
-        System.out.println(snipArea.toString());
         OCR();
     }
 
@@ -99,11 +98,8 @@ public class snip2clip extends JFrame implements MouseListener{
     }
     
     public int getScreenID() {
-        return Integer.parseInt(
-        		MouseInfo.getPointerInfo().getDevice().toString().substring(
-        		MouseInfo.getPointerInfo().getDevice().toString().length()-2, 
-        		MouseInfo.getPointerInfo().getDevice().toString().length()-1)
-        );
+    	String screen = MouseInfo.getPointerInfo().getDevice().toString();
+        return Integer.parseInt(screen.substring(screen.length()-2, screen.length()-1));
     }
 
 	public void OCR(){
@@ -123,7 +119,8 @@ public class snip2clip extends JFrame implements MouseListener{
             	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             	clipboard.setContents(selection, selection);
             	System.out.println("Copied to clipboard!");
-            } catch (TesseractException e) {
+            	Files.delete(Paths.get("./ScreenSnippet.png"));
+            	} catch (TesseractException e) {
                 System.err.println(e.getMessage());
                 System.exit(0);
             }
