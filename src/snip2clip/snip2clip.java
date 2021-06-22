@@ -64,15 +64,23 @@ public class snip2clip extends JFrame implements MouseListener{
  
     public void paint(Graphics g) {
         super.paint(g);
-        g.setColor(new Color(70,70,70));
-    	g.fillRect(0, 0, 4000, 4000);
+        int w = MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth();
+        int h = MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
+        BufferedImage bf = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = bf.createGraphics();
+        
+        g2d.setBackground(new Color(70,70,70));
+        
+//        g.setColor(new Color(70,70,70));
+//    	g.fillRect(0, 0, 4000, 4000);
         
         if(!a.equals(new Point(0,0))) {
         	Point drag = MouseInfo.getPointerInfo().getLocation();
         	Rectangle currRect = setRectangle(a,drag);
-        	g.setColor(new Color(30,30,30));
-        	g.fillRect(currRect.x, currRect.y, currRect.width, currRect.height);
+        	g2d.setColor(new Color(30,30,30));
+        	g2d.fillRect(currRect.x, currRect.y, currRect.width, currRect.height);
         }
+        
         repaint();
     }
     
