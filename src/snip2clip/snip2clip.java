@@ -1,5 +1,6 @@
 package snip2clip;
 
+
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*; 
@@ -28,6 +29,9 @@ public class snip2clip extends JFrame implements MouseListener{
     Rectangle snipArea = new Rectangle(0,0);
     static snip2clip tw = null;
     boolean closing = false;
+    boolean first = true;
+    Rectangle old = new Rectangle(0,0);
+//    BufferedImage bg = null;
     
 
     public snip2clip() {
@@ -50,11 +54,18 @@ public class snip2clip extends JFrame implements MouseListener{
             System.exit(0);
         }
         
+
+//    	int w = MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth();
+//        int h = MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
+//        BufferedImage bf = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
+//        Graphics2D g2d = bf.createGraphics();
+//        g2d.setBackground(new Color(70,70,70));
+        
         JFrame.setDefaultLookAndFeelDecorated(true);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-            	tw = new snip2clip();
+            	if(tw==null) tw = new snip2clip();
                 tw.setOpacity(0.55f);
                 tw.setExtendedState(JFrame.MAXIMIZED_BOTH); 
                 tw.setVisible(true);
@@ -63,29 +74,28 @@ public class snip2clip extends JFrame implements MouseListener{
     }
  
     public void paint(Graphics g) {
-        super.paint(g);
-        g.setColor(new Color(70,70,70));
-    	g.fillRect(0, 0, 4000, 4000);
-        
+    	int w = MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth();
+        int h = MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
+        BufferedImage bf = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = bf.createGraphics();
+//        g2d.setBackground(new Color(170,0,0));
         if(!a.equals(new Point(0,0))) {
         	Point drag = MouseInfo.getPointerInfo().getLocation();
         	Rectangle currRect = setRectangle(a,drag);
-        	g.setColor(new Color(30,30,30));
-        	g.fillRect(currRect.x, currRect.y, currRect.width, currRect.height);
+        	g2d.setColor(new Color(30,30,30));
+        	g2d.fillRect(currRect.x, currRect.y, currRect.width, currRect.height);
         }
+        g.drawImage(bf, 0,0,w, h, null);
         repaint();
     }
     
     public void mousePressed(MouseEvent e) {
         a = MouseInfo.getPointerInfo().getLocation();
-        System.out.println(a);
     }  
 
     public void mouseReleased(MouseEvent e) {
         b = MouseInfo.getPointerInfo().getLocation();
-        System.out.println(b);
         snipArea = selectText(a,b);
-        System.out.println(snipArea.toString());
         OCR();
     }
 
@@ -110,6 +120,10 @@ public class snip2clip extends JFrame implements MouseListener{
         try{
             Robot rbt = new Robot();
             setVisible(false);
+            if(snipArea.width<5 || snipArea.height<5) {
+                System.err.println("Snip size not large enough");
+                System.exit(0);
+            }
             BufferedImage screenFullImage = rbt.createScreenCapture(snipArea);
             ImageIO.write(screenFullImage, "png", new File("./ScreenSnippet.png"));
 
