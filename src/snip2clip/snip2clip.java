@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
@@ -123,6 +125,7 @@ public class snip2clip extends JFrame implements MouseListener{
             	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             	clipboard.setContents(selection, selection);
             	System.out.println("Copied to clipboard!");
+            	Files.delete(FileSystems.getDefault().getPath("ScreenSnippet.png"));
             } catch (TesseractException e) {
                 System.err.println(e.getMessage());
                 System.exit(0);
@@ -165,7 +168,6 @@ public class snip2clip extends JFrame implements MouseListener{
         while(Y > MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight()) Y -=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
         while(X < 0) X +=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth();
         while(Y < 0) Y +=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
-        System.out.println(X + " " + Y);
         return new Rectangle(X,Y,width,height);
     }
 
