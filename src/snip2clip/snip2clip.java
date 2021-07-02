@@ -29,19 +29,13 @@ public class snip2clip extends JFrame implements MouseListener{
     Rectangle snipArea = new Rectangle(0,0);
     static snip2clip tw = null;
     boolean closing = false;
-    boolean first = true;
     Rectangle old = new Rectangle(0,0);
-//    BufferedImage bg = null;
     
-
     public snip2clip() {
         super("TranslucentWindow");
         setLayout(new GridBagLayout());
         addMouseListener(this);
-
-        setSize(300,200);
         setLocationRelativeTo(null);
-        setBackground(new Color(0,0,0));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
@@ -53,13 +47,6 @@ public class snip2clip extends JFrame implements MouseListener{
             System.err.println("Translucency is not supported");
             System.exit(0);
         }
-        
-
-//    	int w = MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth();
-//        int h = MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
-//        BufferedImage bf = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
-//        Graphics2D g2d = bf.createGraphics();
-//        g2d.setBackground(new Color(70,70,70));
         
         JFrame.setDefaultLookAndFeelDecorated(true);
         SwingUtilities.invokeLater(new Runnable() {
@@ -78,14 +65,13 @@ public class snip2clip extends JFrame implements MouseListener{
         int h = MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
         BufferedImage bf = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = bf.createGraphics();
-//        g2d.setBackground(new Color(170,0,0));
         if(!a.equals(new Point(0,0))) {
         	Point drag = MouseInfo.getPointerInfo().getLocation();
         	Rectangle currRect = setRectangle(a,drag);
         	g2d.setColor(new Color(30,30,30));
         	g2d.fillRect(currRect.x, currRect.y, currRect.width, currRect.height);
         }
-        g.drawImage(bf, 0,0,w, h, null);
+        g.drawImage(bf,0,0,w,h,null);
         repaint();
     }
     
@@ -177,6 +163,9 @@ public class snip2clip extends JFrame implements MouseListener{
         }
         while(X > MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth()) X -=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth();
         while(Y > MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight()) Y -=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
+        while(X < 0) X +=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getWidth();
+        while(Y < 0) Y +=MouseInfo.getPointerInfo().getDevice().getDisplayMode().getHeight();
+        System.out.println(X + " " + Y);
         return new Rectangle(X,Y,width,height);
     }
 
